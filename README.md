@@ -1,5 +1,7 @@
 # Study Planner OS - Full Stack Project
 
+LINK : https://study-planner-os.onrender.com
+
 Study Planner OS is a Flask-based personal study management application built for task tracking, progress monitoring, and smart study planning. The system combines a Python backend with server-rendered Jinja templates, a SQLite database, and lightweight analytics to help users stay organized and improve study consistency.
 
 The project is organized into clearly separated layers:
