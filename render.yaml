@@ -1,0 +1,37 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+#
+# You can either:
+#   a) keep your existing service and just copy the start command + env vars
+#      below into the Render dashboard, or
+#   b) create a Blueprint from this repo and let Render manage the service.
+#
+services:
+  - type: web
+    name: study-planner-os
+    runtime: python
+    plan: free
+    buildCommand: pip install -r backend/requirements.txt
+    # IMPORTANT: bind to Render's injected $PORT, never a hardcoded port.
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 backend.run:app
+    # /login is lightweight and always renders (no auth required).
+    healthCheckPath: /login
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: SECRET_KEY
+        generateValue: true        # Render generates a strong random secret
+      - key: SESSION_COOKIE_SECURE
+        value: "1"                 # HTTPS-only session cookies
+      - key: DATABASE_PATH
+        value: /opt/render/project/src/backend/instance/study.db
+    # ------------------------------------------------------------------
+    # OPTIONAL — persist the SQLite database across deploys/restarts.
+    # Render's filesystem is EPHEMERAL: without a disk, every deploy wipes
+    # all users/tasks. Uncomment the block below to attach a 1 GB disk
+    # (about $0.25/month; requires a payment method even on a free plan).
+    # The mountPath matches DATABASE_PATH above, so no code changes needed.
+    # ------------------------------------------------------------------
+    # disk:
+    #   name: study-planner-data
+    #   mountPath: /opt/render/project/src/backend/instance
+    #   sizeGB: 1
